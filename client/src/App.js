@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-// import Button from "@mui/material/Button";
 import AppBar from "./components/AppBar";
 import TransactionForm from "./components/TransactionForm";
 import TransactionList from "./components/TransactionList";
@@ -7,6 +6,7 @@ import Container from "@mui/material/Container";
 
 function App() {
   const [transactions, setTrasactions] = useState([]);
+  const [editTransaction, setEditTransaction] = useState({});
 
   useEffect(() => {
     fetchTransaction();
@@ -22,10 +22,15 @@ function App() {
     <div>
       <AppBar />
       <Container>
-        <TransactionForm fetchTransaction={fetchTransaction} />
+        <TransactionForm
+          fetchTransaction={fetchTransaction}
+          editTransaction={editTransaction}
+          setEditTransaction={setEditTransaction}
+        />
         <TransactionList
           transactions={transactions}
           fetchTransaction={fetchTransaction}
+          setEditTransaction={setEditTransaction}
         />
       </Container>
     </div>

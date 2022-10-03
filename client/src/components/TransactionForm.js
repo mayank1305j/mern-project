@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
@@ -14,8 +14,18 @@ const initialForm = {
   date: new Date(),
 };
 
-export default function TransactionForm({ fetchTransaction }) {
+export default function TransactionForm({
+  fetchTransaction,
+  editTransaction,
+  setEditTransaction,
+}) {
   const [form, setForm] = useState(initialForm);
+
+  useEffect(() => {
+    if (editTransaction.amount !== undefined) {
+      setForm(editTransaction);
+    }
+  }, [editTransaction]);
 
   function handleChange(e) {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -27,16 +37,38 @@ export default function TransactionForm({ fetchTransaction }) {
 
   async function handleSubmit(e) {
     e.preventDefault();
-    const res = await fetch("http://localhost:4000/transaction", {
-      method: "POST",
-      body: JSON.stringify(form),
-      headers: {
-        "content-type": "application/json",
-      },
-    });
-    if (res.ok) {
-      fetchTransaction();
-      setForm(initialForm);
+    editTransaction.amount === undefined ? create() : update();
+
+    async function create() {
+      const res = await fetch("http://localhost:4000/transaction", {
+        method: "POST",
+        body: JSON.stringify(form),
+        headers: {
+          "content-type": "application/json",
+        },
+      });
+      if (res.ok) {
+        fetchTransaction();
+        setForm(initialForm);
+      }
+    }
+
+    async function update() {
+      const res = await fetch(
+        `http://localhost:4000/transaction/${editTransaction._id}`,
+        {
+          method: "PATCH",
+          body: JSON.stringify(form),
+          headers: {
+            "content-type": "application/json",
+          },
+        }
+      );
+      if (res.ok) {
+        fetchTransaction();
+        setForm(initialForm);
+        setEditTransaction({});
+      }
     }
   }
 
@@ -77,9 +109,16 @@ export default function TransactionForm({ fetchTransaction }) {
               )}
             />
           </LocalizationProvider>
-          <Button type="submit" variant="contained">
-            Submit
-          </Button>
+          {editTransaction.amount !== undefined && (
+            <Button type="submit" variant="secondary">
+              Update
+            </Button>
+          )}
+          {editTransaction.amount === undefined && (
+            <Button type="submit" variant="contained">
+              Submit
+            </Button>
+          )}
         </form>
       </CardContent>
     </Card>
