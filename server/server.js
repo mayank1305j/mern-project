@@ -1,26 +1,24 @@
 import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";
+import bodyParser from "body-parser";
+import TransactionsApi from "./routes/TransactionsApi.js";
+import connect from "./database/MongoDb.js";
 
-const port = 4000;
+const Port = 4000;
 
 const app = express();
-
-app.use(cors());
-
-await mongoose.connect(
-  "mongodb+srv://mayank:090770@mayank-mern.wspjwvh.mongodb.net/?retryWrites=true&w=majority"
-);
-console.log("mongodb connected");
 
 app.get("/", (req, res) => {
   res.send("hello world");
 });
 
-app.post("/transaction", (req, res) => {
-  res.send("hello world");
-});
+await connect();
 
-app.listen(port, () => {
+app.use(cors());
+app.use(bodyParser.json());
+app.use("/transaction", TransactionsApi);
+
+app.listen(Port, () => {
   console.log("server is running at http://localhost:4000");
 });
