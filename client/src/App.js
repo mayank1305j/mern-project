@@ -1,38 +1,20 @@
-import { useEffect, useState } from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import AppBar from "./components/AppBar";
-import TransactionForm from "./components/TransactionForm";
-import TransactionList from "./components/TransactionList";
-import Container from "@mui/material/Container";
+import Home from "./pages/Home";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
 
 function App() {
-  const [transactions, setTrasactions] = useState([]);
-  const [editTransaction, setEditTransaction] = useState({});
-
-  useEffect(() => {
-    fetchTransaction();
-  }, []);
-
-  async function fetchTransaction() {
-    const res = await fetch("http://localhost:4000/transaction");
-    const { data } = await res.json();
-    setTrasactions(data);
-  }
-
   return (
     <div>
-      <AppBar />
-      <Container>
-        <TransactionForm
-          fetchTransaction={fetchTransaction}
-          editTransaction={editTransaction}
-          setEditTransaction={setEditTransaction}
-        />
-        <TransactionList
-          transactions={transactions}
-          fetchTransaction={fetchTransaction}
-          setEditTransaction={setEditTransaction}
-        />
-      </Container>
+      <Router>
+        <AppBar />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+        </Routes>
+      </Router>
     </div>
   );
 }
