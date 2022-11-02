@@ -5,8 +5,15 @@ import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import { Link } from "react-router-dom";
+import Cookies from "js-cookie";
+import { useNavigate } from "react-router-dom";
 
 export default function ButtonAppBar() {
+  const navigate = useNavigate();
+  const logout = () => {
+    Cookies.remove("token");
+    navigate("/login");
+  };
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static">
@@ -30,6 +37,9 @@ export default function ButtonAppBar() {
             <Link to="/register" className="text-white">
               Register
             </Link>
+          </Button>
+          <Button color="inherit" onClick={logout}>
+            Logout
           </Button>
         </Toolbar>
       </AppBar>
